@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout :: head}">
+    <style>
+        .btn{
+            background-color: #7835dc;
+            border: none;
+            width: 100%;
+            padding: 0.75rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <nav th:replace="~{layout :: nav}"></nav>
+    <div class="loader">
+        <div class="container" style="margin-top: 80px;">
+            <!-- search bar -->
+            <div class="search-container mb-5">
+                <div class="row">
+                    <div class="col-md-6 mx-auto">
+                        <form action="/movies" method="get" class="d-flex gap-2">
+                            <input type="text" class="form-control" name="query"
+                                placeholder="Search movies or TV shows..." th:value="${searchQuery}">
+                            <button class="btn btn-primary" style="background-color: #7835dc; border-color: #7835dc;">Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- error msg -->
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
+            </div>
+            <!-- recommendations  -->
+            <section th:if="${recommendations != null && !recommendations.empty && searchQuery == null}" class="mb-5">
+                <h2 class="section-title">Recommended For You</h2>
+                <div class="row row-cols-1 row-cols-md-5 g-4">
+                    <div th:each="movie : ${recommendations}" class="col">
+                        <div class="card h-100">
+                            <a th:href="@{'/movies/' + ${movie.id}}" class="text-decoration-none">
+                                <img th:if="${movie.posterPath}"
+                                    th:src="@{'https://image.tmdb.org/t/p/w500' + ${movie.posterPath}}"
+                                    class="card-img-top" style="height: 300px; object-fit: cover;"
+                                    th:alt="${movie.title}">
+                                <div class="card-body">
+                                    <h5 class="card-title text-white" th:text="${movie.title}"></h5>
+                                    <p class="card-text text-secondary small"
+                                        th:text="${#strings.abbreviate(movie.overview, 100)}">
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-primary" style="background-color: #7835dc; color: white;" th:text="${movie.voteAverage} + ' ★'"></span>
+                                        <form th:action="@{/watchlist/add}" method="post">
+                                            <input type="hidden" name="movieId" th:value="${movie.id}">
+                                            <button type="submit" class="btn btn-primary" style="background-color: #7835dc; border-color: #7835dc;">Add</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- results -->
+            <section th:if="${movies != null}" class="mb-5">
+                <h2 class="section-title" th:if="${searchQuery != null}">
+                    Search Results for "<span th:text="${searchQuery}"></span>"
+                </h2>
+                <div class="row row-cols-1 row-cols-md-5 g-4">
+                    <div th:each="movie : ${movies}" class="col">
+                        <div class="card h-100">
+                            <a th:href="@{'/movies/' + ${movie.id}}" class="text-decoration-none">
+                                <img th:if="${movie.posterPath}"
+                                     th:src="@{'https://image.tmdb.org/t/p/w500' + ${movie.posterPath}}"
+                                     class="card-img-top"
+                                     style="height: 300px; object-fit: cover;"
+                                     th:alt="${movie.title}">
+                                <div class="card-body">
+                                    <h5 class="card-title text-white" th:text="${movie.title}"></h5>
+                                    <p class="card-text text-secondary small" 
+                                       th:text="${#strings.abbreviate(movie.overview, 100)}">
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge" style="background-color: #7835dc; color: white;" th:text="${movie.voteAverage} + ' ★'"></span>
+                                        <form th:action="@{/watchlist/add}" method="post">
+                                            <input type="hidden" name="movieId" th:value="${movie.id}">
+                                            <button type="submit" class="btn btn-outline-primary btn-sm">Add</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+
+            <!-- no results -->
+            <div th:if="${movies != null && movies.empty && searchQuery != null}" class="text-center mt-5">
+                <p class="lead text-secondary">No movies found for your search.</p>
+            </div>
+        </div>
+</body>
+
+</html>

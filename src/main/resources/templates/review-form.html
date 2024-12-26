@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout :: head}"></head>
+
+<body>
+    <nav th:replace="~{layout :: nav}"></nav>
+
+    <div class="container mt-4">
+        <h2>Write a Review</h2>
+        <h4 th:text="${movie.title}" class="mb-4"></h4>
+
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <span th:text="${error}"></span>
+        </div>
+
+        <form th:action="@{'/movies/' + ${movie.id} + '/review'}" method="post" class="mb-4">
+            <div class="mb-3">
+                <label for="rating" class="form-label">Rating</label>
+                <select class="form-select" id="rating" name="rating" required>
+                    <option value="">Select rating...</option>
+                    <option value="5">★★★★★ (5)</option>
+                    <option value="4">★★★★☆ (4)</option>
+                    <option value="3">★★★☆☆ (3)</option>
+                    <option value="2">★★☆☆☆ (2)</option>
+                    <option value="1">★☆☆☆☆ (1)</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="content" class="form-label">Review</label>
+                <textarea class="form-control" id="content" name="content" rows="5" required
+                    th:text="${review != null ? review.content : ''}">
+                </textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+            <a th:href="@{'/movies/' + ${movie.id}}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</body>
+
+</html>

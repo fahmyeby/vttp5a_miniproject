@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: nav}"></nav>
+    
+    <div class="container" style="margin-top: 80px;">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card bg-dark">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h2 class="m-0">Edit Profile</h2>
+                        <a href="/profile" class="btn btn-outline-secondary btn-sm">Cancel</a>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div th:if="${success}" class="alert alert-success" role="alert">
+                            <span th:text="${success}"></span>
+                        </div>
+
+                        <div th:if="${error}" class="alert alert-danger" role="alert">
+                            <span th:text="${error}"></span>
+                        </div>
+
+                        <form action="/profile/edit" method="post">
+                            <input type="hidden" name="username" th:value="${user.username}">
+
+                            <div class="mb-3">
+                                <label for="newUsername" class="form-label">New Username</label>
+                                <input type="text" 
+                                       class="form-control bg-dark text-white" 
+                                       id="newUsername" 
+                                       name="newUsername" 
+                                       th:value="${user.username}" 
+                                       placeholder="Enter new username">
+                                <small class="text-muted">Leave blank to keep current username</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="newEmail" class="form-label">New Email</label>
+                                <input type="email" 
+                                       class="form-control bg-dark text-white" 
+                                       id="newEmail" 
+                                       name="newEmail" 
+                                       th:value="${user.email}" 
+                                       placeholder="Enter new email">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <input type="password" 
+                                       class="form-control bg-dark text-white" 
+                                       id="newPassword" 
+                                       name="newPassword" 
+                                       placeholder="Enter new password">
+                                <small class="text-muted">Leave blank to keep current password</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Current Password</label>
+                                <input type="password" 
+                                       class="form-control bg-dark text-white" 
+                                       id="password" 
+                                       name="password" 
+                                       placeholder="Enter current password to confirm changes" 
+                                       required>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+
+                        <hr class="my-4">
+                        <form action="/profile/delete" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+                            <input type="hidden" name="username" th:value="${user.username}">
+                            <div class="mb-3">
+                                <label for="deletePassword" class="form-label">Current Password</label>
+                                <input type="password" 
+                                       class="form-control bg-dark text-white" 
+                                       id="deletePassword" 
+                                       name="password" 
+                                       placeholder="Enter current password to delete account" 
+                                       required>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-danger">Delete Account</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .form-control {
+            border: 1px solid #444;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+            background-color: #2d2d2d;
+            color: white;
+        }
+        .card {
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+    </style>
+</body>
+</html>
