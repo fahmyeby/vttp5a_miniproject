@@ -138,7 +138,6 @@ public class MovieService {
 
     // add movie to user's watchlist - save to redis
     public void addToWatchlist(String username, String movieId) {
-        // Validate inputs
         if (username == null || username.trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be empty");
         }
@@ -153,8 +152,7 @@ public class MovieService {
             }
             JsonObjectBuilder builder = Json.createObjectBuilder();
 
-            // Add required fields with null checks
-            if (movie.getId() != null) {
+           if (movie.getId() != null) {
                 builder.add("id", movie.getId());
             } else {
                 builder.add("id", "0");
@@ -241,7 +239,7 @@ public class MovieService {
             if (movieJson.containsKey("vote_average") && !movieJson.isNull("vote_average")) {
                 movie.setVoteAverage(movieJson.getJsonNumber("vote_average").doubleValue());
             } else {
-                movie.setVoteAverage(0.0); // Default to 0.0
+                movie.setVoteAverage(0.0);
             }
 
             movies.add(movie);
@@ -258,7 +256,6 @@ public class MovieService {
     // get popular movies
     public List<Movie> getPopularMovies() {
         try {
-            // Create URL
             String url = apiUrl + "/movie/popular";
             url += "?api_key=" + apiKey;
             url += "&language=en-US";
@@ -417,10 +414,10 @@ public class MovieService {
                     Movie show = new Movie();
 
                     show.setId(json.getInt("id", 0));
-                    show.setTitle(json.getString("name", "Untitled")); // TV shows use "name" instead of "title"
+                    show.setTitle(json.getString("name", "Untitled")); 
                     show.setOverview(json.getString("overview", "No overview available"));
                     show.setPosterPath(json.getString("poster_path", ""));
-                    show.setReleaseDate(json.getString("first_air_date", "")); // TV shows use "first_air_date"
+                    show.setReleaseDate(json.getString("first_air_date", "")); 
 
                     if (json.containsKey("vote_average")) {
                         show.setVoteAverage(json.getJsonNumber("vote_average").doubleValue());
@@ -448,7 +445,5 @@ public class MovieService {
             return false;
         }
     }
-
-    
 
 }

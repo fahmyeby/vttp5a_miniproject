@@ -75,25 +75,30 @@ public class WebController {
     }
 
     @PostMapping("/login")
-    public String processLogin(@Valid @ModelAttribute("user") User user, BindingResult result, HttpSession session,
-            Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("error", "Validation error, please check input");
-            return "login";
-        }
+public String loginUser(
+        @Valid @ModelAttribute("user") User user, BindingResult result, HttpSession session, Model model) {
 
-        try {
-            if (userService.loginUser(user.getUsername(), user.getPassword())) {
-                session.setAttribute("username", user.getUsername());
-                return "redirect:/";
-            }
-            model.addAttribute("error", "Invalid username or password");
-            return "login";
-        } catch (Exception e) {
-            model.addAttribute("error", "Login failed: " + e.getMessage());
-            return "login";
-        }
+    if (result.hasErrors()) {
+        return "login"; 
     }
+
+    try {
+        if (userService.loginUser(user.getUsername(), user.getPassword())) {
+            session.setAttribute("username", user.getUsername());
+            return "redirect:/"; 
+        } else {
+            model.addAttribute("error", "Invalid username or password.");
+            return "login"; 
+        }
+    } catch (IllegalArgumentException e) {
+        model.addAttribute("error", e.getMessage());
+        return "login";
+    } catch (Exception e) {
+        model.addAttribute("error", "Login failed: " + e.getMessage());
+        return "login";
+    }
+}
+
 
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
@@ -102,16 +107,16 @@ public class WebController {
     }
 
     @PostMapping("/register")
-    public String processRegistration(@Valid @ModelAttribute("user") User user, BindingResult result, Model model) {
+    public String processRegistration(
+            @Valid @ModelAttribute("user") User user, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
-            model.addAttribute("error", "Validation error, please check input");
             return "register";
         }
+
         try {
-            validateRegistration(user.getUsername(), user.getPassword(), user.getEmail());
             userService.registerUser(user.getUsername(), user.getPassword(), user.getEmail());
-            model.addAttribute("success", "Registration successful. Please login.");
+            model.addAttribute("success", "Registration successful. Please log in.");
             return "login";
         } catch (IllegalArgumentException | IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
@@ -392,7 +397,7 @@ public class WebController {
         }
     }
 
-    private void validateRegistration(String username, String password, String email) {
+    /* private void validateRegistration(String username, String password, String email) {
         if (username == null || username.trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be empty");
         }
@@ -402,5 +407,6 @@ public class WebController {
         if (email == null || !email.contains("@")) {
             throw new IllegalArgumentException("Invalid email format");
         }
-    }
+    } */
+
 }

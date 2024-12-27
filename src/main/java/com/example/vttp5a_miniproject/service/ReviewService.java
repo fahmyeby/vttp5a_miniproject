@@ -23,23 +23,16 @@ public class ReviewService {
     @Autowired
     private RedisRepo repo;
 
-    public void addReview(String username, Integer movieId, 
-                          String movieTitle, String content, Integer rating) {
-        if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Username cannot be empty");
-        }
-        if (movieId == null) {
-            throw new IllegalArgumentException("Movie ID cannot be empty");
-        }
-        if (content == null || content.trim().isEmpty()) {
-            throw new IllegalArgumentException("Review content cannot be empty");
-        }
-        if (rating == null || rating < 1 || rating > 5) {
-            throw new IllegalArgumentException("Rating must be between 1 and 5");
-        }
+    public void addReview(String username, Integer movieId, String movieTitle, String content, Integer rating) {
+        if (username == null || username.trim().isEmpty()) throw new IllegalArgumentException("username cannot be empty");
+        if (movieId == null) throw new IllegalArgumentException("movie id cannot be empty");
+        if (content == null || content.trim().isEmpty()) throw new IllegalArgumentException("review content cannot be empty");
+        if (rating == null || rating < 1 || rating > 5) throw new IllegalArgumentException("rating must be between 1 and 5");
 
+        // create review obj
         Review review = new Review(username, movieId, movieTitle, content, rating);
 
+        // build json for review
         JsonObjectBuilder builder = Json.createObjectBuilder()
             .add("username", review.getUsername())
             .add("movieId", review.getMovieId())
@@ -48,16 +41,15 @@ public class ReviewService {
             .add("rating", review.getRating())
             .add("createdAt", review.getCreatedAt().toString());
 
-        String reviewJson = builder.build().toString();
-        repo.saveReview(username, movieId.toString(), reviewJson);
+        String reviewJson = builder.build().toString(); // convert to string
+        repo.saveReview(username, movieId.toString(), reviewJson); // save to redis
     }
 
     public Review getReview(String username, Integer movieId) {
-        String reviewJson = repo.getReview(username, movieId.toString());
-        if (reviewJson == null) {
-            return null;
-        }
+        String reviewJson = repo.getReview(username, movieId.toString()); // fetch review
+        if (reviewJson == null) return null;
 
+        // parse json to review obj
         JsonReader jsonReader = Json.createReader(new StringReader(reviewJson));
         JsonObject json = jsonReader.readObject();
 
@@ -73,9 +65,10 @@ public class ReviewService {
     }
 
     public List<Review> getUserReviews(String username) {
-        Map<Object, Object> reviewsMap = repo.getUserReviews(username);
+        Map<Object, Object> reviewsMap = repo.getUserReviews(username); // get all reviews
         List<Review> reviews = new ArrayList<>();
 
+        // convert json to review objs
         for (Object reviewJson : reviewsMap.values()) {
             JsonReader jsonReader = Json.createReader(new StringReader(reviewJson.toString()));
             JsonObject json = jsonReader.readObject();
@@ -95,14 +88,11 @@ public class ReviewService {
     }
 
     public void deleteReview(String username, Integer movieId) {
-        if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Username cannot be empty");
-        }
-        if (movieId == null) {
-            throw new IllegalArgumentException("Movie ID cannot be empty");
-        }
+        if (username == null || username.trim().isEmpty()) throw new IllegalArgumentException("username cannot be empty");
+        if (movieId == null) throw new IllegalArgumentException("movie id cannot be empty");
 
-        repo.deleteReview(username, movieId.toString());
+        repo.deleteReview(username, movieId.toString()); // delete review from redis
     }
 }
+
 

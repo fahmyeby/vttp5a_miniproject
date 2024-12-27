@@ -30,7 +30,7 @@
             <div class="mb-3">
                 <label for="content" class="form-label">Review</label>
                 <textarea class="form-control" id="content" name="content" rows="5" required
-                    th:text="${review != null ? review.content : ''}">
+                    th:text="${review != null ? review.content : ''}"> <!-- if review not null then content of textarea is review.content -->
                 </textarea>
             </div>
 

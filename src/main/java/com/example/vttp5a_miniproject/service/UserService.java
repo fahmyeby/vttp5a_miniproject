@@ -17,7 +17,7 @@ public class UserService {
 
     public void registerUser(String username, String password, String email) {
         if (repo.userExists(username)) {
-            throw new IllegalStateException("Username already taken");
+            throw new IllegalStateException("username already taken");
         } // check if username exists
 
         // create user
@@ -27,11 +27,18 @@ public class UserService {
         repo.saveUser(username, userData);
     }
 
-    public Boolean loginUser(String username, String password) {
-        Map<Object, Object> userData = repo.getUser(username);
-        String storedPassword = (String) userData.get("password");
+    public boolean loginUser(String username, String password) {
+        if (!repo.userExists(username)) {
+            throw new IllegalArgumentException("User does not exist. Please register first.");
+        }
+            Map<Object, Object> userData = repo.getUser(username);
+        if (userData == null || userData.isEmpty()) {
+            throw new IllegalArgumentException("User data is missing");
+        }
+            String storedPassword = (String) userData.get("password");
         return password.equals(storedPassword);
     }
+    
 
     // get user profile
     public User getUserProfile(String username) {
