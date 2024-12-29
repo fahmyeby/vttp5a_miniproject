@@ -23,7 +23,7 @@ public class UserRestController {
 
     // register new user
     // POST /api/users/register
-    // Handle JSON input
+    // handle json input
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> registerUserJson(@RequestBody User userJson) {
         try {
@@ -46,7 +46,7 @@ public class UserRestController {
         }
     }
 
-    // Handle Form-Encoded input
+    // form encoded input
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> registerUserForm(
             @RequestParam String username,
@@ -67,7 +67,7 @@ public class UserRestController {
 
     // login user
     // POST /api/users/login
-    // Handle JSON input
+    // handle json input
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> loginUserJson(@RequestBody User user) {
         try {
@@ -86,7 +86,7 @@ public class UserRestController {
         }
     }
 
-    // Handle Form-Encoded input
+    // form encoded input
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> loginUserForm(
             @RequestParam String username,

@@ -50,14 +50,10 @@ public class WebController {
         try {
             List<Movie> popularMovies = movieService.getPopularMovies();
             List<Movie> topRatedMovies = movieService.getTopRatedMovies();
-            List<Movie> popularTVShows = movieService.getPopularTVShows();
-            List<Movie> topRatedTVShows = movieService.getTopRatedTVShows();
             List<Movie> recommendations = recommendationService.getRecommendations(username);
 
             model.addAttribute("popularMovies", popularMovies);
             model.addAttribute("topRatedMovies", topRatedMovies);
-            model.addAttribute("popularTVShows", popularTVShows);
-            model.addAttribute("topRatedTVShows", topRatedTVShows);
             model.addAttribute("recommendations", recommendations);
             model.addAttribute("username", username);
             return "index";
@@ -75,30 +71,29 @@ public class WebController {
     }
 
     @PostMapping("/login")
-public String loginUser(
-        @Valid @ModelAttribute("user") User user, BindingResult result, HttpSession session, Model model) {
+    public String loginUser(
+            @Valid @ModelAttribute("user") User user, BindingResult result, HttpSession session, Model model) {
 
-    if (result.hasErrors()) {
-        return "login"; 
-    }
-
-    try {
-        if (userService.loginUser(user.getUsername(), user.getPassword())) {
-            session.setAttribute("username", user.getUsername());
-            return "redirect:/"; 
-        } else {
-            model.addAttribute("error", "Invalid username or password.");
-            return "login"; 
+        if (result.hasErrors()) {
+            return "login";
         }
-    } catch (IllegalArgumentException e) {
-        model.addAttribute("error", e.getMessage());
-        return "login";
-    } catch (Exception e) {
-        model.addAttribute("error", "Login failed: " + e.getMessage());
-        return "login";
-    }
-}
 
+        try {
+            if (userService.loginUser(user.getUsername(), user.getPassword())) {
+                session.setAttribute("username", user.getUsername());
+                return "redirect:/";
+            } else {
+                model.addAttribute("error", "Invalid username or password.");
+                return "login";
+            }
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "login";
+        } catch (Exception e) {
+            model.addAttribute("error", "Login failed: " + e.getMessage());
+            return "login";
+        }
+    }
 
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
@@ -223,8 +218,7 @@ public String loginUser(
             return "redirect:/watchlist";
         }
     }
-
-    // path variable used here
+    
     @GetMapping("/movies/{id}")
     public String showMovieDetails(@PathVariable String id, HttpSession session, Model model) {
         String username = (String) session.getAttribute("username");
@@ -345,7 +339,6 @@ public String loginUser(
         return "review-form";
     }
 
-    // path variable used here
     @PostMapping("/movies/{movieId}/review")
     public String submitReview(@PathVariable Integer movieId, @RequestParam String content,
             @RequestParam Integer rating, HttpSession session, RedirectAttributes redirectAttributes) {
@@ -378,7 +371,6 @@ public String loginUser(
         return "reviews";
     }
 
-    // path variable used here
     @PostMapping("/movies/{movieId}/review/delete")
     public String deleteReview(@PathVariable Integer movieId, HttpSession session,
             RedirectAttributes redirectAttributes) {
@@ -397,16 +389,19 @@ public String loginUser(
         }
     }
 
-    /* private void validateRegistration(String username, String password, String email) {
-        if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Username cannot be empty");
-        }
-        if (password == null || password.trim().isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be empty");
-        }
-        if (email == null || !email.contains("@")) {
-            throw new IllegalArgumentException("Invalid email format");
-        }
-    } */
+    /*
+     * private void validateRegistration(String username, String password, String
+     * email) {
+     * if (username == null || username.trim().isEmpty()) {
+     * throw new IllegalArgumentException("Username cannot be empty");
+     * }
+     * if (password == null || password.trim().isEmpty()) {
+     * throw new IllegalArgumentException("Password cannot be empty");
+     * }
+     * if (email == null || !email.contains("@")) {
+     * throw new IllegalArgumentException("Invalid email format");
+     * }
+     * }
+     */
 
 }

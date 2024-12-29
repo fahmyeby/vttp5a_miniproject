@@ -29,7 +29,7 @@ public class MovieService {
     private String apiUrl;
 
     @Autowired
-    RedisRepo repo;
+    private RedisRepo repo;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -342,98 +342,6 @@ public class MovieService {
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch top rated movies: " + e.getMessage());
-        }
-    }
-
-    public List<Movie> getPopularTVShows() {
-        try {
-            String url = apiUrl + "/tv/popular";
-            url += "?api_key=" + apiKey;
-            url += "&language=en-US";
-            url += "&page=1";
-
-            String response = restTemplate.getForObject(url, String.class);
-            if (response == null) {
-                throw new RuntimeException("No response from API");
-            }
-
-            List<Movie> showList = new ArrayList<>();
-            JsonReader jsonReader = Json.createReader(new StringReader(response));
-            JsonObject result = jsonReader.readObject();
-            JsonArray items = result.getJsonArray("results");
-
-            for (int i = 0; i < items.size(); i++) {
-                try {
-                    JsonObject json = items.getJsonObject(i);
-                    Movie show = new Movie();
-
-                    show.setId(json.getInt("id", 0));
-                    show.setTitle(json.getString("name", "Untitled")); // TV shows use "name" instead of "title"
-                    show.setOverview(json.getString("overview", "No overview available"));
-                    show.setPosterPath(json.getString("poster_path", ""));
-                    show.setReleaseDate(json.getString("first_air_date", "")); // TV shows use "first_air_date"
-
-                    if (json.containsKey("vote_average")) {
-                        show.setVoteAverage(json.getJsonNumber("vote_average").doubleValue());
-                    } else {
-                        show.setVoteAverage(0.0);
-                    }
-
-                    showList.add(show);
-                } catch (Exception e) {
-                    System.err.println("Error parsing TV show: " + e.getMessage());
-                }
-            }
-            return showList;
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch popular TV shows: " + e.getMessage());
-        }
-    }
-
-    public List<Movie> getTopRatedTVShows() {
-        try {
-            String url = apiUrl + "/tv/top_rated";
-            url += "?api_key=" + apiKey;
-            url += "&language=en-US";
-            url += "&page=1";
-
-            String response = restTemplate.getForObject(url, String.class);
-            if (response == null) {
-                throw new RuntimeException("No response from API");
-            }
-
-            List<Movie> showList = new ArrayList<>();
-            JsonReader jsonReader = Json.createReader(new StringReader(response));
-            JsonObject result = jsonReader.readObject();
-            JsonArray items = result.getJsonArray("results");
-
-            for (int i = 0; i < items.size(); i++) {
-                try {
-                    JsonObject json = items.getJsonObject(i);
-                    Movie show = new Movie();
-
-                    show.setId(json.getInt("id", 0));
-                    show.setTitle(json.getString("name", "Untitled")); 
-                    show.setOverview(json.getString("overview", "No overview available"));
-                    show.setPosterPath(json.getString("poster_path", ""));
-                    show.setReleaseDate(json.getString("first_air_date", "")); 
-
-                    if (json.containsKey("vote_average")) {
-                        show.setVoteAverage(json.getJsonNumber("vote_average").doubleValue());
-                    } else {
-                        show.setVoteAverage(0.0);
-                    }
-
-                    showList.add(show);
-                } catch (Exception e) {
-                    System.err.println("Error parsing TV show: " + e.getMessage());
-                }
-            }
-            return showList;
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch top rated TV shows: " + e.getMessage());
         }
     }
 

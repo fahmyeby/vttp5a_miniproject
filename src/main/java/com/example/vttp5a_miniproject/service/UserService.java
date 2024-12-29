@@ -13,7 +13,7 @@ import com.example.vttp5a_miniproject.repo.RedisRepo;
 @Service
 public class UserService {
     @Autowired
-    RedisRepo repo;
+    private RedisRepo repo;
 
     public void registerUser(String username, String password, String email) {
         if (repo.userExists(username)) {
